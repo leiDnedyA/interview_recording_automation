@@ -8,6 +8,7 @@ SOURCE_DIRECTORY=./test_dir
 DESTINATION_DIRECTORY=./test_output_dir
 REMOTASKS_EMAIL=test@work.com
 TARGET_FILE_SUBSTRING=video
+GOOGLE_DRIVE_URL=https://drive.google.com/
 ```
 
 Install packages and run

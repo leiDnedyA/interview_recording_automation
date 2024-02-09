@@ -3,6 +3,7 @@ import shutil
 import argparse
 import dotenv
 import subprocess
+import webbrowser
 from datetime import datetime
 
 dotenv.load_dotenv()
@@ -11,6 +12,7 @@ source_directory = os.getenv("SOURCE_DIRECTORY")
 destination_directory = os.getenv("DESTINATION_DIRECTORY")
 target_file_substring = os.getenv("TARGET_FILE_SUBSTRING") # substring of file in target subdirectory
 remotasks_email = os.getenv("REMOTASKS_EMAIL")
+google_drive_url = os.getenv("GOOGLE_DRIVE_URL")
 
 source_directory = os.path.expanduser(source_directory)
 destination_directory = os.path.expanduser(destination_directory)
@@ -73,6 +75,7 @@ def main():
         return
 
     open_file_explorer(destination_directory)
+    webbrowser.open(google_drive_url)
 
 
 if __name__ == "__main__":
