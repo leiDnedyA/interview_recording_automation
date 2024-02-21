@@ -3,6 +3,7 @@ import shutil
 import argparse
 import dotenv
 import subprocess
+import platform
 import webbrowser
 from datetime import datetime
 
@@ -17,7 +18,18 @@ google_drive_url = os.getenv("GOOGLE_DRIVE_URL")
 source_directory = os.path.expanduser(source_directory)
 destination_directory = os.path.expanduser(destination_directory)
 
-def open_file_explorer(directory):
+def is_gnome_running():
+  """Returns True if GNOME is running, False otherwise."""
+  try:
+    subprocess.call(["gnome-shell", "--version"])
+    return True
+  except subprocess.CalledProcessError:
+    return False
+
+def open_file_explorer(directory, filename=None):
+    # If running in gnome environment, open nautilus and select file
+    if is_gnome_running() and filename: 
+        subprocess.Popen(["nautilus", os.path.join(directory, filename)])
     try:
         subprocess.Popen(["open", directory])
     except Exception as e:
@@ -28,7 +40,7 @@ def get_formatted_date():
     formatted_date = current_date.strftime('%Y-%m-%d')
     return formatted_date
 
-def search_and_copy_file(source_dir, destination_dir, file_substring, user_email):
+def search_and_copy_file(source_dir, destination_dir, file_substring, output_filename):
     """ Searches for and copies recording file. Returns 0 if successful and 1 otherwise. """
     for filename in os.listdir(source_dir):
         if file_substring.upper() in filename.upper():
@@ -46,7 +58,6 @@ def search_and_copy_file(source_dir, destination_dir, file_substring, user_email
                 if (not target_file_path):
                     raise Exception(f"No file with substring '{target_file_substring}' in target directory '{subdirectory_path}'")
 
-                output_filename = f'{get_formatted_date()}_{remotasks_email}_{user_email}.mp4'
                 output_path = os.path.join(destination_directory, output_filename)
 
                 # Copy the file to the destination directory
@@ -68,13 +79,15 @@ def main():
 
     args = parser.parse_args()
 
-    result = search_and_copy_file(source_directory, destination_directory, args.directory_keyword, args.user_email)
+    output_filename = f'{get_formatted_date()}_{remotasks_email}_{args.user_email}.mp4'
+
+    result = search_and_copy_file(source_directory, destination_directory, args.directory_keyword, output_filename)
 
     if result != 0:
         print('Error: there was a problem.')
         return
 
-    open_file_explorer(destination_directory)
+    open_file_explorer(destination_directory, output_filename)
     webbrowser.open(google_drive_url)
 
 
