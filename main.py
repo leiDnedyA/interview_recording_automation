@@ -27,10 +27,11 @@ def is_gnome_running():
     return False
 
 def open_file_explorer(directory, filename=None):
-    # If running in gnome environment, open nautilus and select file
-    if is_gnome_running() and filename: 
-        subprocess.Popen(["nautilus", os.path.join(directory, filename)])
     try:
+        # If running in gnome environment, open nautilus and select file
+        if is_gnome_running() and filename: 
+            subprocess.Popen(["nautilus", os.path.join(directory, filename)])
+            return
         subprocess.Popen(["open", directory])
     except Exception as e:
         print(f'Error: {e}')
